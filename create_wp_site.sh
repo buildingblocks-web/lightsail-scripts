@@ -34,8 +34,12 @@ echo "✅ Pulling repository from GitHub..."
 mkdir -p $DEV_ROOT
 if [ -d "$DEV_ROOT/.git" ]; then
     echo "Repository exists, pulling latest changes..."
-    git -C $DEV_ROOT pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
+    GIT_SSH_COMMAND="ssh -i $SSH_KEY" git -C "$DEV_ROOT" pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
 else
+    if [ "$(ls -A "$DEV_ROOT")" ]; then
+        echo "❌ $DEV_ROOT is not empty. Please empty it manually or choose another folder."
+        exit 1
+    fi
     echo "Cloning repository into $DEV_ROOT..."
     GIT_SSH_COMMAND="ssh -i $SSH_KEY" git clone "$GITHUB_REPO" "$DEV_ROOT" || { echo "❌ Git clone failed! Exiting."; exit 1; }
 fi
