@@ -13,6 +13,8 @@ DB_USER="wp_${SUBFOLDER}"
 DB_PASS=$(openssl rand -base64 16)
 APACHE_DEV_CONF="/opt/bitnami/apache2/conf/vhosts/${SUBFOLDER}-dev.conf"
 APACHE_LIVE_CONF="/opt/bitnami/apache2/conf/vhosts/${SUBFOLDER}-live.conf"
+GITHUB_REPO="git@github.com:buildingblocks-web/$SUBFOLDER.git"
+SSH_KEY="/home/bitnami/.ssh/github_keys/id_ed25519_github"
 
 # Validate input
 if [ -z "$DEV_DOMAIN" ] || [ -z "$LIVE_DOMAIN" ] || [ -z "$SUBFOLDER" ]; then
@@ -35,7 +37,7 @@ if [ -d "$DEV_ROOT/.git" ]; then
     git -C $DEV_ROOT pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
 else
     echo "Cloning repository into $DEV_ROOT..."
-    git clone git@github.com:USERNAME/REPO_NAME.git "$DEV_ROOT" || { echo "❌ Git clone failed! Exiting."; exit 1; }
+    GIT_SSH_COMMAND="ssh -i $SSH_KEY" git -C "$DEV_ROOT" pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
 fi
 
 echo "✅ Updating wp-config.php with DB credentials..."
