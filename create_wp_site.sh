@@ -16,8 +16,8 @@ DB_NAME="wp_${SUBFOLDER}"
 DB_USER="wp_${SUBFOLDER}"
 DB_PASS=$(openssl rand -base64 16)
 
-APACHE_DEV_CONF="/etc/apache2/sites-available/${SUBFOLDER}-dev.conf"
-APACHE_LIVE_CONF="/etc/apache2/sites-available/${SUBFOLDER}-live.conf"
+APACHE_DEV_CONF="/opt/bitnami/apache2/conf/vhosts/${SUBFOLDER}-dev.conf"
+APACHE_LIVE_CONF="/opt/bitnami/apache2/conf/vhosts/${SUBFOLDER}-live.conf"
 
 GITHUB_REPO="git@github.com:buildingblocks-web/$SUBFOLDER.git"
 SSH_KEY="/home/bitnami/.ssh/github_keys/id_ed25519_github"
@@ -107,7 +107,7 @@ EOF
 echo "✅ Enabling Apache sites and reloading..."
 sudo a2ensite "${SUBFOLDER}-dev.conf"
 sudo a2ensite "${SUBFOLDER}-live.conf"
-sudo systemctl reload apache2 || sudo systemctl restart apache2
+sudo /opt/bitnami/ctlscript.sh reload apache
 
 # -------- Done ----------
 echo "✅ Done!"
