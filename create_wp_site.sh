@@ -32,6 +32,7 @@ echo "✅ Cloning WordPress from GitHub..."
 DEV_ROOT="/home/bitnami/sites/$SUBFOLDER/public_html"
 mkdir -p "$DEV_ROOT"
 
+rm -rf /home/bitnami/sites/buildingblocks/public_html/*
 # Clone or pull repository safely
 if [ -d "$DEV_ROOT/.git" ]; then
     echo "✅ Repository exists in $DEV_ROOT, pulling latest changes..."
