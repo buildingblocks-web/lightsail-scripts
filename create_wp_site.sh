@@ -11,6 +11,7 @@ STATIC_ROOT="$DEV_ROOT/static"
 DB_NAME="wp_${SUBFOLDER}"
 DB_USER="wp_${SUBFOLDER}"
 DB_PASS=$(openssl rand -base64 16)
+BITNAMI_DB_PASSWORD=$(cat /home/bitnami/bitnami_application_password)
 APACHE_DEV_CONF="/opt/bitnami/apache2/conf/vhosts/${SUBFOLDER}-dev.conf"
 APACHE_LIVE_CONF="/opt/bitnami/apache2/conf/vhosts/${SUBFOLDER}-live.conf"
 GITHUB_REPO="git@github.com:buildingblocks-web/$SUBFOLDER.git"
@@ -54,10 +55,10 @@ sed -i "s|password_here|$ESCAPED_PASS|" "$WP_CONFIG"
 
 echo "✅ Creating MySQL database..."
 # Use Bitnami MariaDB binary
-sudo /opt/bitnami/mariadb/bin/mariadb -e "CREATE DATABASE ${DB_NAME} DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-sudo /opt/bitnami/mariadb/bin/mariadb -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
-sudo /opt/bitnami/mariadb/bin/mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'localhost';"
-sudo /opt/bitnami/mariadb/bin/mariadb -e "FLUSH PRIVILEGES;"
+sudo /opt/bitnami/mariadb/bin/mariadb -u root -p"$BITNAMI_DB_PASSWORD" -e "CREATE DATABASE ${DB_NAME} DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo /opt/bitnami/mariadb/bin/mariadb -u root -p"$BITNAMI_DB_PASSWORD" -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
+sudo /opt/bitnami/mariadb/bin/mariadb -u root -p"$BITNAMI_DB_PASSWORD" -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'localhost';"
+sudo /opt/bitnami/mariadb/bin/mariadb -u root -p"$BITNAMI_DB_PASSWORD" -e "FLUSH PRIVILEGES;"
 
 echo "✅ Creating Apache VirtualHosts..."
 
