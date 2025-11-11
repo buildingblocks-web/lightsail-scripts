@@ -37,7 +37,7 @@ if [ -d "$DEV_ROOT/.git" ]; then
     git -C $DEV_ROOT pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
 else
     echo "Cloning repository into $DEV_ROOT..."
-    GIT_SSH_COMMAND="ssh -i $SSH_KEY" git -C "$DEV_ROOT" pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
+    GIT_SSH_COMMAND="ssh -i $SSH_KEY" git clone "$GITHUB_REPO" "$DEV_ROOT" || { echo "❌ Git clone failed! Exiting."; exit 1; }
 fi
 
 echo "✅ Updating wp-config.php with DB credentials..."
