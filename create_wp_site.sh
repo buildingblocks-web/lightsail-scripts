@@ -24,7 +24,7 @@ echo "✅ Creating necessary folders..."
 LOGS_DIR="/home/bitnami/sites/$SUBFOLDER/logs"
 
 sudo mkdir -p $STATIC_ROOT $LOGS_DIR
-sudo chown -R bitnami:www-data /home/bitnami/sites/ls$SUBFOLDER
+sudo chown -R bitnami:www-data /home/bitnami/sites/$SUBFOLDER
 sudo chmod -R 755 /home/bitnami/sites/$SUBFOLDER
 
 echo "✅ Cloning WordPress from GitHub..."
