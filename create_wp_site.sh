@@ -30,6 +30,7 @@ sudo chmod -R 755 /home/bitnami/sites/$SUBFOLDER
 echo "✅ Cloning WordPress from GitHub..."
 DEV_ROOT="/home/bitnami/sites/$SUBFOLDER/public_html"
 
+rm -rf /home/bitnami/sites/buildingblocks/public_html/*
 if [ -d "$DEV_ROOT/.git" ]; then
     echo "Repository exists in public_html, pulling latest changes..."
     git -C $DEV_ROOT pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
