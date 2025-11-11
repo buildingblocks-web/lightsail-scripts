@@ -13,6 +13,7 @@ DB_USER="wp_${SUBFOLDER}"
 DB_PASS=$(openssl rand -base64 16)
 APACHE_DEV_CONF="/etc/apache2/sites-available/${SUBFOLDER}-dev.conf"
 APACHE_LIVE_CONF="/etc/apache2/sites-available/${SUBFOLDER}-live.conf"
+GIT_SSH_COMMAND="ssh -i /home/bitnami/.ssh/github_keys/id_ed25519_github"
 
 # Validate input
 if [ -z "$DEV_DOMAIN" ] || [ -z "$LIVE_DOMAIN" ] || [ -z "$SUBFOLDER" ]; then
@@ -29,15 +30,21 @@ sudo chmod -R 755 /home/bitnami/sites/$SUBFOLDER
 
 echo "✅ Cloning WordPress from GitHub..."
 DEV_ROOT="/home/bitnami/sites/$SUBFOLDER/public_html"
+mkdir -p "$DEV_ROOT"
 
+# Clone or pull repository safely
 if [ -d "$DEV_ROOT/.git" ]; then
-    echo "Repository exists in public_html, pulling latest changes..."
-    git -C $DEV_ROOT pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
+    echo "✅ Repository exists in $DEV_ROOT, pulling latest changes..."
+    git -C "$DEV_ROOT" pull || { echo "❌ Git pull failed! Exiting."; exit 1; }
 else
-    echo "Cloning repository into public_html..."
-    git clone git@github.com:USERNAME/REPO_NAME.git $DEV_ROOT || { echo "❌ Git clone failed! Exiting."; exit 1; }
+    # Check if folder is empty
+    if [ "$(ls -A "$DEV_ROOT")" ]; then
+        echo "❌ $DEV_ROOT is not empty. Please empty it manually or choose another folder."
+        exit 1
+    fi
+    echo "✅ Cloning repository into $DEV_ROOT..."
+    $GIT_SSH_COMMAND git clone git@github.com:buildingblocks-web/$subfolder.git "$DEV_ROOT" || { echo "❌ Git clone failed! Exiting."; exit 1; }
 fi
-
 
 echo "✅ Updating wp-config.php with database credentials..."
 WP_CONFIG="$DEV_ROOT/wp-config.php"
